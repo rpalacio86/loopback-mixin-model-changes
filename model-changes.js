@@ -38,6 +38,8 @@ module.exports = function(Model, options) {
     var trackFrom = options.trackUsersFrom || 'userId';
     var userKey = options.trackUsersAs;
     var whitelistActions = (options.whitelistActions && Array.isArray(options.whitelistActions)) ? options.whitelistActions : false;
+    var createdAtKey = options.createdAtKey || 'createdAt';
+    var creationTimeThreshold = options.creationTimeThreshold || 1000;
 
     if(options.whitelist && Array.isArray(options.whitelist)) {
       strictAuditng = true;
@@ -87,7 +89,7 @@ module.exports = function(Model, options) {
       }
       var ChangeStreamModel = Model.app.models[options.changeModel];
       var opts = extractCtxOpts(ctx);
-      if (ctx.isNewInstance) {
+      if (ctx.isNewInstance && (new Date() - ctx.instance[createdAtKey]) < creationTimeThreshold ) {
         recordModelChange(actions.CREATE, ctx.instance, opts, next);
       } else {
         if(ctx.options.previousValue) {
