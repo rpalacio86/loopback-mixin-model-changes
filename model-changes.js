@@ -252,7 +252,7 @@ module.exports = function(Model, options) {
       }
       if(action === actions.UPDATE) {
         var deltas = Object.keys(payload).filter(function(key) { return payload[key] !== undefined; });
-        if(!deltas.length) {
+        if(!deltas.length || (deltas.length = 1 && deltas[0] === userKey)) {
           return null;
         }
       }
